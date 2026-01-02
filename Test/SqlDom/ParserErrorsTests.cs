@@ -7625,5 +7625,27 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE OUTPUT inserted.*, deleted.*;";
                 "SELECT * FROM VECTOR_SEARCH('tbl1', 'col1', 'query_vector', 'dot', 5)",
                 new ParserErrorInfo(28, "SQL46010", "'tbl1'"));
         }
+
+        [TestMethod]
+        [Priority(0)]
+        [SqlStudioTestCategory(Category.UnitTest)]
+        public void TimestampByClauseInvalidPlacementTest()
+        {
+            const bool quotedIdentifiers = true;
+            TSql170Parser parser = new TSql170Parser(quotedIdentifiers);
+            IList<ParseError> errors;
+
+            ParserTestUtils.ParseString(
+                parser,
+                "SELECT *\nTIMESTAMP BY EntryTime\nFROM input",
+                out errors);
+            Assert.IsTrue(errors.Count > 0, "Expected parsing to fail when TIMESTAMP BY appears before FROM.");
+
+            ParserTestUtils.ParseString(
+                parser,
+                "SELECT *\nFROM input\nWHERE 1 = 1\nTIMESTAMP BY EntryTime",
+                out errors);
+            Assert.IsTrue(errors.Count > 0, "Expected parsing to fail when TIMESTAMP BY appears after WHERE.");
+        }
     }
 }

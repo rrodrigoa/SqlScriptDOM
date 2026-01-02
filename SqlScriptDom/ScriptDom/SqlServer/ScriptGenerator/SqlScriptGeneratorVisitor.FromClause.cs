@@ -38,6 +38,24 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom.ScriptGenerator
 
                     GenerateCommaSeparatedList(tableSources);
 
+                    if (fromClause.TimestampByClause != null)
+                    {
+                        NewLine();
+                        GenerateKeyword(TSqlTokenType.Timestamp);
+                        GenerateSpace();
+                        GenerateKeyword(TSqlTokenType.By);
+                        GenerateSpaceAndFragmentIfNotNull(fromClause.TimestampByClause.TimestampExpression);
+
+                        if (fromClause.TimestampByClause.OverExpressions != null &&
+                            fromClause.TimestampByClause.OverExpressions.Count > 0)
+                        {
+                            GenerateSpace();
+                            GenerateKeyword(TSqlTokenType.Over);
+                            GenerateSpace();
+                            GenerateCommaSeparatedList(fromClause.TimestampByClause.OverExpressions);
+                        }
+                    }
+
                     PopAlignmentPoint();
 
                     PopAlignmentPoint();

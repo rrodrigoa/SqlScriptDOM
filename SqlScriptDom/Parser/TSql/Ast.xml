@@ -3559,6 +3559,11 @@
   <Class Name="FromClause" Summary="Represents the From clause in a QuerySpecification">
     <Member Name="TableReferences" Type="TableReference" Collection="true" Summary="Optional may be null."/>
     <Member Name="PredictTableReference" Type="PredictTableReference" Collection="true" Summary="Predict clause, may be null."/>
+    <Member Name="TimestampByClause" Type="TimestampByClause" Summary="Optional may be null."/>
+  </Class>
+  <Class Name="TimestampByClause" Summary="Represents a TIMESTAMP BY clause.">
+    <Member Name="TimestampExpression" Type="ScalarExpression" Summary="Timestamp expression."/>
+    <Member Name="OverExpressions" Type="ScalarExpression" Collection="true" Summary="Optional may be null."/>
   </Class>
   <Class Name="PredictTableReference" Base="TableReferenceWithAlias" Summary="Represents PREDICT table reference">
     <Member Name="ModelVariable" Type="ScalarExpression" Summary="Model used to predict, if supplied as a literal or variable."/>
