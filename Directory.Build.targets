@@ -1,3 +1,1 @@
-<!-- This SDK is for using packages.props for Nuget references: https://github.com/Microsoft/MSBuildSdks/tree/main/src/CentralPackageVersions -->
-<Project Sdk="Microsoft.Build.CentralPackageVersions">
-</Project>
+<Project/>
