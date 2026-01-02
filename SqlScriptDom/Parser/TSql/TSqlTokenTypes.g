@@ -180,6 +180,7 @@ tokens {
     Table = "table";
     TextSize = "textsize";
     Then = "then";
+    Timestamp = "timestamp";
     To = "to";
     Top = "top";
     Tran = "tran";
@@ -298,5 +299,4 @@ tokens {
 	// Whitespace is here to make this file ANTLR-processable; no real lexer is generated
 protected
 WhiteSpace : ;
-
 
