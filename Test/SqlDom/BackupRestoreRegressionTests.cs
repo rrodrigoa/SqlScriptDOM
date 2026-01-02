@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlStudio.Tests.AssemblyTools.TestCategory;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace SqlStudio.Tests.UTSqlScriptDom
 {
@@ -24,6 +25,7 @@ namespace SqlStudio.Tests.UTSqlScriptDom
         [SqlStudioTestCategory(Category.UnitTest)]
         public void BackupRestoreUrl()
         {
+            System.Diagnostics.Debugger.Launch();
             ParserTestUtils.ExecuteTestForAllParsers(parser =>
             {
                 string script = @"BACKUP DATABASE AdventureWorks2016
