@@ -18277,6 +18277,7 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
     SchemaObjectName vSchemaObjectName;
     Identifier vFileGroupName;
     FromClause vFromClause;
+    TimestampByClause vTimestampByClause;
     WhereClause vWhereClause;
     GroupByClause vGroupByClause;
     HavingClause vHavingClause;
@@ -18329,6 +18330,12 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
             vResult.FromClause = vFromClause;
         }
         (
+            vTimestampByClause=timestampByClause
+            {
+                vResult.TimestampByClause = vTimestampByClause;
+            }
+        )?
+        (
             vWhereClause=whereClause
             {
                 vResult.WhereClause = vWhereClause;
@@ -18352,6 +18359,21 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
                 vResult.WindowClause = vWindowClause;
             }
         )?
+    ;
+
+timestampByClause returns [TimestampByClause vResult = this.FragmentFactory.CreateFragment<TimestampByClause>()]
+{
+    ScalarExpression vExpression;
+}
+    :   tTimestamp:Timestamp
+        {
+            UpdateTokenInfo(vResult, tTimestamp);
+        }
+        By
+        vExpression=expression
+        {
+            vResult.TimestampExpression = vExpression;
+        }
     ;
 
 uniqueRowFilterOpt [QuerySpecification vParent]

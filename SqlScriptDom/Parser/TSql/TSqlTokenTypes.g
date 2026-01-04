@@ -293,6 +293,9 @@ tokens {
 	// Comments
 	SingleLineComment;
 	MultilineComment;
+
+    //Only T-SQL 170
+    Timestamp = "timestamp";
 }
 
 	// Whitespace is here to make this file ANTLR-processable; no real lexer is generated

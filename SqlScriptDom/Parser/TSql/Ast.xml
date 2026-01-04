@@ -3551,7 +3551,8 @@
     <Member Name="TopRowFilter" Type="TopRowFilter" Summary="Shows the usage of top row filter. Optional may be null."/>
     <Member Name="SelectElements" Type="SelectElement" Collection="true" Summary="These are the selected columns, or set variables, the strong types of objects that can be here are SelectColumn, SelectSetVariable."/>
     <Member Name="FromClause" Type="FromClause" Summary="Optional may be null."/>
-    <Member Name="WhereClause" Type="WhereClause" Summary="Where clause. Optional, may be null."/>
+	<Member Name="TimestampByClause" Type="TimestampByClause" Summary="Optional may be null."/>
+	<Member Name="WhereClause" Type="WhereClause" Summary="Where clause. Optional, may be null."/>
     <Member Name="GroupByClause" Type="GroupByClause" Summary="Group by clause. Optional, may be null."/>
     <Member Name="HavingClause" Type="HavingClause" Summary="Having clause. Optional, may be null."/>
     <Member Name="WindowClause" Type="WindowClause" Summary="Window clause. Optional, may be null."/>
@@ -3571,6 +3572,9 @@
       </Summary>
     </Member>
     <InheritedClass Name="TableReferenceWithAlias"/>
+  </Class>
+  <Class Name="TimestampByClause" Summary="Represents a TIMESTAMP BY clause.">
+	<Member Name="TimestampExpression" Type="ScalarExpression" Summary="Timestamp expression."/>
   </Class>
   <Class Name="SelectElement"  Abstract="true" Summary="Represents an element in the SELECT clause.">
   </Class>
