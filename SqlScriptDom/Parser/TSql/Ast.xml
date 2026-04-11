@@ -3602,6 +3602,7 @@
   <Class Name="TableReferenceWithAlias" Abstract="true" Base="TableReference" Summary="This represents a table reference that can have an alias.">
     <Member Name="Alias" Type="Identifier" Summary="Optional table alias. May be null."/>
     <Member Name="ForPath" Type="bool" Summary="Whether this table reference is marked as graph FOR PATH."/>
+	<Member Name="TimestampByClause" Type="TimestampByClause" Summary="Optional may be null."/>
   </Class>
   <Class Name="TableReferenceWithAliasAndColumns" Abstract="true" Base="TableReferenceWithAlias" Summary="Represents a table reference that can specify column aliases.">
     <InheritedClass Name="TableReferenceWithAlias" />

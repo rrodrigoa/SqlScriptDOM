@@ -47,7 +47,7 @@ namespace SqlStudio.Tests.UTSqlScriptDom
                 if (_numberOfErrors.Value != errors.Count)
                     ParserTestUtils.LogErrors(errors);
 
-                Assert.AreEqual<int>(_numberOfErrors, errors.Count, testScriptName + ": number of errors after parsing is different from expected.");
+                Assert.AreEqual((int)_numberOfErrors, errors.Count, testScriptName + ": number of errors after parsing is different from expected.");
             }
             if (_errorInfos != null)
             {

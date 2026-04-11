@@ -350,6 +350,11 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom.ScriptGenerator
             GenerateNewLineOrSpace(_options.NewLineBeforeFromClause);
         }
 
+        protected void GenerateSeparatorForTimestampByClause()
+        {
+            GenerateNewLineOrSpace(_options.NewLineBeforeTimestampByClause);
+        }
+
         protected void GenerateSeparatorForWhereClause()
         {
             GenerateNewLineOrSpace(_options.NewLineBeforeWhereClause);

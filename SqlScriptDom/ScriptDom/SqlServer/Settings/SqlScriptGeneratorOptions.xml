@@ -53,6 +53,9 @@
     <Setting name="NewLineBeforeFromClause" type="bool" default="true">
       <Summary>Gets or sets a boolean indicating if there should be a newline before the FROM clause in a SELECT statement</Summary>
     </Setting>
+	<Setting name="NewLineBeforeTimestampByClause" type="bool" default="true">
+		<Summary>Gets or sets a boolean indicating if there should be a newline before the TIMESTAMP BY clause in a SELECT statement</Summary>
+	</Setting>
     <Setting name="NewLineBeforeWhereClause" type="bool" default="true">
       <Summary>Gets or sets a boolean indicating if there should be a newline before the WHERE clause in a SELECT statement</Summary>
     </Setting>

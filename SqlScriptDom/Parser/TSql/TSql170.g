@@ -18145,6 +18145,7 @@ subquerySpecification [SubDmlFlags subDmlFlags] returns [QuerySpecification vRes
     TopRowFilter vTopRowFilter;
     SelectElement vSelectColumn;
     FromClause vFromClause;
+    TimestampByClause vTimestampByClause;
     WhereClause vWhereClause;
     GroupByClause vGroupByClause;
     HavingClause vHavingClause;
@@ -18180,6 +18181,12 @@ subquerySpecification [SubDmlFlags subDmlFlags] returns [QuerySpecification vRes
         {
             vResult.FromClause = vFromClause;
         }
+        (
+            vTimestampByClause=timestampByClause
+            {
+                vResult.TimestampByClause = vTimestampByClause;
+            }
+        )?
         (
             vWhereClause=whereClause
             {
@@ -20576,6 +20583,7 @@ schemaObjectTableReference[SchemaObjectName vSchemaObjectName] returns [NamedTab
 simpleTableReferenceAlias[TableReferenceWithAlias vParent]
 {
     Identifier vIdentifier;
+    TimestampByClause vTimestampByClause;
 }
     :   {
             // Starting from TSql170, 'WINDOW' will be treated as conditional keyword
@@ -20591,6 +20599,12 @@ simpleTableReferenceAlias[TableReferenceWithAlias vParent]
         {
             vParent.Alias = vIdentifier;
         }
+        (
+            vTimestampByClause=timestampByClause
+            {
+                vParent.TimestampByClause = vTimestampByClause;
+            }
+        )?
     ;
 
 simpleTableReferenceAliasOpt[TableReferenceWithAlias vParent]
