@@ -331,6 +331,7 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         internal const string Durability = "DURABILITY";
         internal const string Dynamic = "DYNAMIC";
         internal const string DWCompatibilityLevel = "DW_COMPATIBILITY_LEVEL";
+        internal const string Duration = "DURATION";
         internal const string Edition = "EDITION";
         internal const string ElasticPool = "ELASTIC_POOL";
         internal const string Elements = "ELEMENTS";
@@ -1123,6 +1124,7 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         internal const string WideNative = "WIDENATIVE";
         internal const string Window = "WINDOW";
         internal const string Windows = "WINDOWS";
+        internal const string TumblingWindow = "TUMBLINGWINDOW";
         internal const string Without = "WITHOUT";
         internal const string WithoutArrayWrapper = "WITHOUT_ARRAY_WRAPPER";
         internal const string Witness = "WITNESS";

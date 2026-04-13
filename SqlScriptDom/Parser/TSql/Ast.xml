@@ -3552,6 +3552,8 @@
     <Member Name="SelectElements" Type="SelectElement" Collection="true" Summary="These are the selected columns, or set variables, the strong types of objects that can be here are SelectColumn, SelectSetVariable."/>
     <Member Name="FromClause" Type="FromClause" Summary="Optional may be null."/>
 	<Member Name="TimestampByClause" Type="TimestampByClause" Summary="Optional may be null."/>
+	<Member Name="ChronosWindowClause" Type="ChronosWindowClause" Summary="Optional may be null."/>
+	<Member Name="ChronosComputeClause" Type="ChronosComputeClause" Summary="Optional may be null."/>
 	<Member Name="WhereClause" Type="WhereClause" Summary="Where clause. Optional, may be null."/>
     <Member Name="GroupByClause" Type="GroupByClause" Summary="Group by clause. Optional, may be null."/>
     <Member Name="HavingClause" Type="HavingClause" Summary="Having clause. Optional, may be null."/>
@@ -3575,6 +3577,26 @@
   </Class>
   <Class Name="TimestampByClause" Summary="Represents a TIMESTAMP BY clause.">
 	<Member Name="TimestampExpression" Type="ScalarExpression" Summary="Timestamp expression."/>
+  </Class>
+  <Class Name="ChronosWindowClause" Summary="Represents a ChronosQL WITH WINDOW clause.">
+    <Member Name="WindowExpression" Type="ChronosWindowExpression" Summary="Window expression."/>
+  </Class>
+  <Class Name="ChronosWindowExpression" Abstract="true" Summary="Base type for ChronosQL window expressions.">
+  </Class>
+  <Class Name="ChronosTumblingWindowExpression" Base="ChronosWindowExpression" Summary="Represents a ChronosQL TumblingWindow expression.">
+    <Member Name="Size" Type="ChronosDurationExpression" Summary="Window size."/>
+    <InheritedClass Name="ChronosWindowExpression" />
+  </Class>
+  <Class Name="ChronosDurationExpression" Summary="Represents a ChronosQL duration literal.">
+    <Member Name="Value" Type="ScalarExpression" Summary="Duration value."/>
+    <Member Name="Unit" Type="Identifier" Summary="Duration unit."/>
+  </Class>
+  <Class Name="ChronosComputeClause" Summary="Represents a ChronosQL COMPUTE clause.">
+    <Member Name="Expressions" Type="ChronosComputeExpression" Collection="true" Summary="Computed expressions."/>
+  </Class>
+  <Class Name="ChronosComputeExpression" Summary="Represents a single ChronosQL computed expression.">
+    <Member Name="Alias" Type="Identifier" Summary="Computed alias."/>
+    <Member Name="Expression" Type="ScalarExpression" Summary="Computed expression."/>
   </Class>
   <Class Name="SelectElement"  Abstract="true" Summary="Represents an element in the SELECT clause.">
   </Class>

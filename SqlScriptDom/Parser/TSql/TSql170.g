@@ -18146,6 +18146,8 @@ subquerySpecification [SubDmlFlags subDmlFlags] returns [QuerySpecification vRes
     SelectElement vSelectColumn;
     FromClause vFromClause;
     TimestampByClause vTimestampByClause;
+    ChronosWindowClause vChronosWindowClause;
+    ChronosComputeClause vChronosComputeClause;
     WhereClause vWhereClause;
     GroupByClause vGroupByClause;
     HavingClause vHavingClause;
@@ -18185,6 +18187,18 @@ subquerySpecification [SubDmlFlags subDmlFlags] returns [QuerySpecification vRes
             vTimestampByClause=timestampByClause
             {
                 vResult.TimestampByClause = vTimestampByClause;
+            }
+        )?
+        (
+            vChronosWindowClause=chronosWindowClause
+            {
+                vResult.ChronosWindowClause = vChronosWindowClause;
+            }
+        )?
+        (
+            vChronosComputeClause=chronosComputeClause
+            {
+                vResult.ChronosComputeClause = vChronosComputeClause;
             }
         )?
         (
@@ -18285,6 +18299,8 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
     Identifier vFileGroupName;
     FromClause vFromClause;
     TimestampByClause vTimestampByClause;
+    ChronosWindowClause vChronosWindowClause;
+    ChronosComputeClause vChronosComputeClause;
     WhereClause vWhereClause;
     GroupByClause vGroupByClause;
     HavingClause vHavingClause;
@@ -18343,6 +18359,18 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
             }
         )?
         (
+            vChronosWindowClause=chronosWindowClause
+            {
+                vResult.ChronosWindowClause = vChronosWindowClause;
+            }
+        )?
+        (
+            vChronosComputeClause=chronosComputeClause
+            {
+                vResult.ChronosComputeClause = vChronosComputeClause;
+            }
+        )?
+        (
             vWhereClause=whereClause
             {
                 vResult.WhereClause = vWhereClause;
@@ -18380,6 +18408,109 @@ timestampByClause returns [TimestampByClause vResult = this.FragmentFactory.Crea
         vExpression=expression
         {
             vResult.TimestampExpression = vExpression;
+        }
+    ;
+
+chronosWindowClause returns [ChronosWindowClause vResult = this.FragmentFactory.CreateFragment<ChronosWindowClause>()]
+{
+    ChronosWindowExpression vWindowExpression;
+}
+    :   tWith:With
+        {
+            UpdateTokenInfo(vResult, tWith);
+        }
+        tWindow:Identifier
+        {
+            Match(tWindow, CodeGenerationSupporter.Window);
+            UpdateTokenInfo(vResult, tWindow);
+        }
+        vWindowExpression=chronosWindowExpression
+        {
+            vResult.WindowExpression = vWindowExpression;
+        }
+    ;
+
+chronosWindowExpression returns [ChronosWindowExpression vResult]
+    :   vResult=chronosTumblingWindowExpression
+    ;
+
+chronosTumblingWindowExpression returns [ChronosTumblingWindowExpression vResult = this.FragmentFactory.CreateFragment<ChronosTumblingWindowExpression>()]
+{
+    ChronosDurationExpression vSize;
+}
+    :   tTumbling:Identifier
+        {
+            Match(tTumbling, CodeGenerationSupporter.TumblingWindow);
+            UpdateTokenInfo(vResult, tTumbling);
+        }
+        LeftParenthesis
+        vSize=chronosDurationExpression
+        {
+            vResult.Size = vSize;
+        }
+        tRParen:RightParenthesis
+        {
+            UpdateTokenInfo(vResult, tRParen);
+        }
+    ;
+
+chronosDurationExpression returns [ChronosDurationExpression vResult = this.FragmentFactory.CreateFragment<ChronosDurationExpression>()]
+{
+    ScalarExpression vValue;
+    Identifier vUnit;
+}
+    :   tDuration:Identifier
+        {
+            Match(tDuration, CodeGenerationSupporter.Duration);
+            UpdateTokenInfo(vResult, tDuration);
+        }
+        LeftParenthesis
+        vUnit=identifier
+        Comma
+        vValue=expression
+        tRParen:RightParenthesis
+        {
+            vResult.Value = vValue;
+            vResult.Unit = vUnit;
+            UpdateTokenInfo(vResult, tRParen);
+        }
+    ;
+
+chronosComputeClause returns [ChronosComputeClause vResult = this.FragmentFactory.CreateFragment<ChronosComputeClause>()]
+{
+    ChronosComputeExpression vExpression;
+}
+    :   tCompute:Compute
+        {
+            UpdateTokenInfo(vResult, tCompute);
+        }
+        vExpression=chronosComputeExpression
+        {
+            AddAndUpdateTokenInfo(vResult, vResult.Expressions, vExpression);
+        }
+        (
+            Comma
+            vExpression=chronosComputeExpression
+            {
+                AddAndUpdateTokenInfo(vResult, vResult.Expressions, vExpression);
+            }
+        )*
+    ;
+
+chronosComputeExpression returns [ChronosComputeExpression vResult = this.FragmentFactory.CreateFragment<ChronosComputeExpression>()]
+{
+    Identifier vAlias;
+    ScalarExpression vExpression;
+}
+    :   vAlias=identifier
+        {
+            vResult.UpdateTokenInfo(vAlias);
+            vResult.Alias = vAlias;
+        }
+        EqualsSign
+        vExpression=expression
+        {
+            vResult.Expression = vExpression;
         }
     ;
 
