@@ -11,10 +11,11 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom.ScriptGenerator
     {
         public override void ExplicitVisit(ChronosWindowClause node)
         {
-            GenerateKeyword(TSqlTokenType.With);
-            GenerateSpace();
             GenerateIdentifier(CodeGenerationSupporter.Window);
-            GenerateSpaceAndFragmentIfNotNull(node.WindowExpression);
+            GenerateSpace();
+            GenerateKeyword(TSqlTokenType.By);
+            GenerateSpace();
+            GenerateCommaSeparatedList(node.GroupingSpecifications);
         }
 
         public override void ExplicitVisit(ChronosTumblingWindowExpression node)

@@ -3578,8 +3578,8 @@
   <Class Name="TimestampByClause" Summary="Represents a TIMESTAMP BY clause.">
 	<Member Name="TimestampExpression" Type="ScalarExpression" Summary="Timestamp expression."/>
   </Class>
-  <Class Name="ChronosWindowClause" Summary="Represents a ChronosQL WITH WINDOW clause.">
-    <Member Name="WindowExpression" Type="ChronosWindowExpression" Summary="Window expression."/>
+  <Class Name="ChronosWindowClause" Summary="Represents a ChronosQL WINDOW BY clause.">
+    <Member Name="GroupingSpecifications" Type="GroupingSpecification" Collection="true" Summary="Window grouping expressions."/>
   </Class>
   <Class Name="ChronosWindowExpression" Abstract="true" Summary="Base type for ChronosQL window expressions.">
   </Class>

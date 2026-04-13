@@ -18413,21 +18413,23 @@ timestampByClause returns [TimestampByClause vResult = this.FragmentFactory.Crea
 
 chronosWindowClause returns [ChronosWindowClause vResult = this.FragmentFactory.CreateFragment<ChronosWindowClause>()]
 {
-    ChronosWindowExpression vWindowExpression;
+    ExpressionGroupingSpecification vGroupingItem;
+    bool alreadyEncounteredDistributedAggHint = false;
 }
-    :   tWith:With
-        {
-            UpdateTokenInfo(vResult, tWith);
-        }
-        tWindow:Identifier
+    :   tWindow:Identifier By
         {
             Match(tWindow, CodeGenerationSupporter.Window);
             UpdateTokenInfo(vResult, tWindow);
         }
-        vWindowExpression=chronosWindowExpression
+        vGroupingItem = simpleGroupByItem[ref alreadyEncounteredDistributedAggHint]
         {
-            vResult.WindowExpression = vWindowExpression;
+            AddAndUpdateTokenInfo(vResult, vResult.GroupingSpecifications, vGroupingItem);
         }
+        (Comma vGroupingItem = simpleGroupByItem[ref alreadyEncounteredDistributedAggHint]
+            {
+                AddAndUpdateTokenInfo(vResult, vResult.GroupingSpecifications, vGroupingItem);
+            }
+        )*
     ;
 
 chronosWindowExpression returns [ChronosWindowExpression vResult]
