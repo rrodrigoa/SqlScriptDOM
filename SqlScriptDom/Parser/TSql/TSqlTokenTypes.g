@@ -242,6 +242,7 @@ tokens {
 	Star;
 	MultiplyEquals;
 	Plus;
+	QuestionMark;
 	Comma;
 	Minus;
 	Dot;

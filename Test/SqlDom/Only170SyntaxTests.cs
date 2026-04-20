@@ -35,7 +35,8 @@ namespace SqlStudio.Tests.UTSqlScriptDom
             new ParserTest170("TimestampByClauseTests170.sql", nErrors80: 4, nErrors90: 4, nErrors100: 4, nErrors110: 4, nErrors120: 4, nErrors130: 4, nErrors140: 4, nErrors150: 4, nErrors160: 4),
             new ParserTest170("TimestampByInCteTests170.sql", nErrors80: 1, nErrors90: 1, nErrors100: 1, nErrors110: 1, nErrors120: 1, nErrors130: 1, nErrors140: 1, nErrors150: 1, nErrors160: 1),
             new ParserTest170("WithWindowComputeTests170.sql", nErrors80: 1, nErrors90: 1, nErrors100: 1, nErrors110: 1, nErrors120: 1, nErrors130: 1, nErrors140: 1, nErrors150: 1, nErrors160: 1),
-            new ParserTest170("WithWindowComputeInCteTests170.sql", nErrors80: 1, nErrors90: 1, nErrors100: 1, nErrors110: 1, nErrors120: 1, nErrors130: 1, nErrors140: 1, nErrors150: 1, nErrors160: 1)
+            new ParserTest170("WithWindowComputeInCteTests170.sql", nErrors80: 1, nErrors90: 1, nErrors100: 1, nErrors110: 1, nErrors120: 1, nErrors130: 1, nErrors140: 1, nErrors150: 1, nErrors160: 1),
+            new ParserTest170("MatchRecognizeClauseTests170.sql", nErrors80: 4, nErrors90: 4, nErrors100: 4, nErrors110: 4, nErrors120: 4, nErrors130: 4, nErrors140: 4, nErrors150: 4, nErrors160: 4)
         };
 
         private static readonly ParserTest[] SqlAzure170_TestInfos =

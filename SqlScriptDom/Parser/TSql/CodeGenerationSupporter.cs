@@ -253,6 +253,7 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         internal const string CountBig = "COUNT_BIG";
         internal const string Counter = "COUNTER";
         internal const string CountRows = "COUNT_ROWS";
+        internal const string Define = "DEFINE";
         internal const string Cpu = "CPU";
         internal const string CreateNew = "CREATE_NEW";
         internal const string CreationDisposition = "CREATION_DISPOSITION";
@@ -560,6 +561,7 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         internal const string Level = "LEVEL";
         internal const string Level1 = "LEVEL_1";
         internal const string Level2 = "LEVEL_2";
+        internal const string Limit = "LIMIT";
         internal const string Level3 = "LEVEL_3";
         internal const string Level4 = "LEVEL_4";
         internal const string Library = "LIBRARY";
@@ -726,6 +728,7 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         internal const string OptimizeForArraySearch = "OPTIMIZE_FOR_ARRAY_SEARCH";
         internal const string OptimizeForSequentialKey = "OPTIMIZE_FOR_SEQUENTIAL_KEY";
         internal const string OptimizerQueue = "OPTIMIZER_QUEUE";
+        internal const string One = "ONE";
         internal const string Order = "ORDER";
         internal const string Orc = "ORC";
         internal const string Out = "OUT";
@@ -751,7 +754,10 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         internal const string Partner = "PARTNER";
         // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification = "Not a password")]
         internal const string Password = "PASSWORD";
+        internal const string Past = "PAST";
         internal const string Path = "PATH";
+        internal const string Pattern = "PATTERN";
+        internal const string Per = "PER";
         internal const string Partial = "PARTIAL";
         internal const string Pause = "PAUSE";
         internal const string Paused = "PAUSED";
@@ -1781,6 +1787,8 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom
         // Graph-related
         internal const string GraphEdge = "EDGE";
         internal const string GraphMatch = "MATCH";
+        internal const string MatchRecognize = "MATCH_RECOGNIZE";
+        internal const string Measures = "MEASURES";
         internal const string GraphNode = "NODE";
         internal const string GraphEdgeId = "EDGE_ID";
         internal const string GraphNodeId = "NODE_ID";

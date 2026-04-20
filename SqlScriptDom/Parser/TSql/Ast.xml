@@ -3552,6 +3552,7 @@
     <Member Name="SelectElements" Type="SelectElement" Collection="true" Summary="These are the selected columns, or set variables, the strong types of objects that can be here are SelectColumn, SelectSetVariable."/>
     <Member Name="FromClause" Type="FromClause" Summary="Optional may be null."/>
 	<Member Name="TimestampByClause" Type="TimestampByClause" Summary="Optional may be null."/>
+	<Member Name="MatchRecognizeClause" Type="MatchRecognizeClause" Summary="Optional may be null."/>
 	<Member Name="ChronosWindowClause" Type="ChronosWindowClause" Summary="Optional may be null."/>
 	<Member Name="ChronosComputeClause" Type="ChronosComputeClause" Summary="Optional may be null."/>
 	<Member Name="WhereClause" Type="WhereClause" Summary="Where clause. Optional, may be null."/>
@@ -3577,6 +3578,87 @@
   </Class>
   <Class Name="TimestampByClause" Summary="Represents a TIMESTAMP BY clause.">
 	<Member Name="TimestampExpression" Type="ScalarExpression" Summary="Timestamp expression."/>
+  </Class>
+  <Class Name="MatchRecognizeClause" Summary="Represents a MATCH_RECOGNIZE clause.">
+    <Member Name="PartitionByExpressions" Type="ScalarExpression" Collection="true" Summary="Optional partition expressions."/>
+    <Member Name="Limit" Type="ChronosDurationExpression" Summary="Match duration limit."/>
+    <Member Name="Measures" Type="MatchRecognizeMeasure" Collection="true" Summary="Optional measure expressions."/>
+    <Member Name="RowsPerMatchClause" Type="MatchRecognizeRowsPerMatchClause" Summary="Optional may be null."/>
+    <Member Name="AfterMatchSkipClause" Type="MatchRecognizeAfterMatchSkipClause" Summary="Optional may be null."/>
+    <Member Name="Pattern" Type="MatchRecognizePattern" Summary="Row pattern expression."/>
+    <Member Name="Definitions" Type="MatchRecognizePatternVariableDefinition" Collection="true" Summary="Pattern variable definitions."/>
+    <Member Name="Alias" Type="Identifier" Summary="Alias for the MATCH_RECOGNIZE result."/>
+  </Class>
+  <Class Name="MatchRecognizeMeasure" Summary="Represents a MEASURES expression in MATCH_RECOGNIZE.">
+    <Member Name="Expression" Type="ScalarExpression" Summary="Measure expression."/>
+    <Member Name="Alias" Type="Identifier" Summary="Measure alias."/>
+  </Class>
+  <Class Name="MatchRecognizeRowsPerMatchClause" Abstract="true" Summary="Base type for MATCH_RECOGNIZE rows-per-match output modes.">
+  </Class>
+  <Class Name="MatchRecognizeOneRowPerMatchClause" Base="MatchRecognizeRowsPerMatchClause" Summary="Represents ONE ROW PER MATCH.">
+    <InheritedClass Name="MatchRecognizeRowsPerMatchClause" />
+  </Class>
+  <Class Name="MatchRecognizeAllRowsPerMatchClause" Base="MatchRecognizeRowsPerMatchClause" Summary="Represents ALL ROWS PER MATCH.">
+    <InheritedClass Name="MatchRecognizeRowsPerMatchClause" />
+  </Class>
+  <Class Name="MatchRecognizeAfterMatchSkipClause" Abstract="true" Summary="Base type for AFTER MATCH SKIP clauses.">
+  </Class>
+  <Class Name="MatchRecognizeSkipPastLastRowClause" Base="MatchRecognizeAfterMatchSkipClause" Summary="Represents AFTER MATCH SKIP PAST LAST ROW.">
+    <InheritedClass Name="MatchRecognizeAfterMatchSkipClause" />
+  </Class>
+  <Class Name="MatchRecognizeSkipToNextRowClause" Base="MatchRecognizeAfterMatchSkipClause" Summary="Represents AFTER MATCH SKIP TO NEXT ROW.">
+    <InheritedClass Name="MatchRecognizeAfterMatchSkipClause" />
+  </Class>
+  <Class Name="MatchRecognizeSkipToFirstClause" Base="MatchRecognizeAfterMatchSkipClause" Summary="Represents AFTER MATCH SKIP TO FIRST variable.">
+    <InheritedClass Name="MatchRecognizeAfterMatchSkipClause" />
+    <Member Name="PatternVariable" Type="Identifier" Summary="Target pattern variable."/>
+  </Class>
+  <Class Name="MatchRecognizeSkipToLastClause" Base="MatchRecognizeAfterMatchSkipClause" Summary="Represents AFTER MATCH SKIP TO LAST variable.">
+    <InheritedClass Name="MatchRecognizeAfterMatchSkipClause" />
+    <Member Name="PatternVariable" Type="Identifier" Summary="Target pattern variable."/>
+  </Class>
+  <Class Name="MatchRecognizePatternVariableDefinition" Summary="Represents a DEFINE entry for a MATCH_RECOGNIZE pattern variable.">
+    <Member Name="Variable" Type="Identifier" Summary="Pattern variable name."/>
+    <Member Name="Condition" Type="BooleanExpression" Summary="Boolean condition for the variable."/>
+  </Class>
+  <Class Name="MatchRecognizePattern" Abstract="true" Summary="Base type for MATCH_RECOGNIZE row patterns.">
+  </Class>
+  <Class Name="MatchRecognizePatternAlternation" Base="MatchRecognizePattern" Summary="Represents row pattern alternation.">
+    <InheritedClass Name="MatchRecognizePattern" />
+    <Member Name="Patterns" Type="MatchRecognizePattern" Collection="true" Summary="Alternation branches."/>
+  </Class>
+  <Class Name="MatchRecognizePatternConcatenation" Base="MatchRecognizePattern" Summary="Represents row pattern concatenation.">
+    <InheritedClass Name="MatchRecognizePattern" />
+    <Member Name="Patterns" Type="MatchRecognizePattern" Collection="true" Summary="Concatenated pattern parts."/>
+  </Class>
+  <Class Name="MatchRecognizePatternFactor" Base="MatchRecognizePattern" Summary="Represents a row pattern element with an optional quantifier.">
+    <InheritedClass Name="MatchRecognizePattern" />
+    <Member Name="Pattern" Type="MatchRecognizePattern" Summary="The pattern being quantified."/>
+    <Member Name="Quantifier" Type="MatchRecognizePatternQuantifier" Summary="Optional may be null."/>
+  </Class>
+  <Class Name="MatchRecognizePatternVariable" Base="MatchRecognizePattern" Summary="Represents a row pattern variable reference.">
+    <InheritedClass Name="MatchRecognizePattern" />
+    <Member Name="Variable" Type="Identifier" Summary="Pattern variable name."/>
+  </Class>
+  <Class Name="MatchRecognizePatternGroup" Base="MatchRecognizePattern" Summary="Represents a parenthesized row pattern expression.">
+    <InheritedClass Name="MatchRecognizePattern" />
+    <Member Name="Pattern" Type="MatchRecognizePattern" Summary="Grouped pattern expression."/>
+  </Class>
+  <Class Name="MatchRecognizePatternQuantifier" Abstract="true" Summary="Base type for row pattern quantifiers.">
+  </Class>
+  <Class Name="MatchRecognizeZeroOrMoreQuantifier" Base="MatchRecognizePatternQuantifier" Summary="Represents the '*' row pattern quantifier.">
+    <InheritedClass Name="MatchRecognizePatternQuantifier" />
+  </Class>
+  <Class Name="MatchRecognizeOneOrMoreQuantifier" Base="MatchRecognizePatternQuantifier" Summary="Represents the '+' row pattern quantifier.">
+    <InheritedClass Name="MatchRecognizePatternQuantifier" />
+  </Class>
+  <Class Name="MatchRecognizeOptionalQuantifier" Base="MatchRecognizePatternQuantifier" Summary="Represents the '?' row pattern quantifier.">
+    <InheritedClass Name="MatchRecognizePatternQuantifier" />
+  </Class>
+  <Class Name="MatchRecognizeCountedQuantifier" Base="MatchRecognizePatternQuantifier" Summary="Represents a counted row pattern quantifier.">
+    <InheritedClass Name="MatchRecognizePatternQuantifier" />
+    <Member Name="MinimumCount" Type="IntegerLiteral" Summary="Optional lower bound."/>
+    <Member Name="MaximumCount" Type="IntegerLiteral" Summary="Optional upper bound."/>
   </Class>
   <Class Name="ChronosWindowClause" Summary="Represents a ChronosQL WINDOW BY clause.">
     <Member Name="GroupingSpecifications" Type="GroupingSpecification" Collection="true" Summary="Window grouping expressions."/>

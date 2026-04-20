@@ -18146,6 +18146,7 @@ subquerySpecification [SubDmlFlags subDmlFlags] returns [QuerySpecification vRes
     SelectElement vSelectColumn;
     FromClause vFromClause;
     TimestampByClause vTimestampByClause;
+    MatchRecognizeClause vMatchRecognizeClause;
     ChronosWindowClause vChronosWindowClause;
     ChronosComputeClause vChronosComputeClause;
     WhereClause vWhereClause;
@@ -18187,6 +18188,12 @@ subquerySpecification [SubDmlFlags subDmlFlags] returns [QuerySpecification vRes
             vTimestampByClause=timestampByClause
             {
                 vResult.TimestampByClause = vTimestampByClause;
+            }
+        )?
+        (
+            vMatchRecognizeClause=matchRecognizeClause
+            {
+                vResult.MatchRecognizeClause = vMatchRecognizeClause;
             }
         )?
         (
@@ -18299,6 +18306,7 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
     Identifier vFileGroupName;
     FromClause vFromClause;
     TimestampByClause vTimestampByClause;
+    MatchRecognizeClause vMatchRecognizeClause;
     ChronosWindowClause vChronosWindowClause;
     ChronosComputeClause vChronosComputeClause;
     WhereClause vWhereClause;
@@ -18359,6 +18367,12 @@ querySpecification [SubDmlFlags subDmlFlags, SelectStatement vSelectStatement] r
             }
         )?
         (
+            vMatchRecognizeClause=matchRecognizeClause
+            {
+                vResult.MatchRecognizeClause = vMatchRecognizeClause;
+            }
+        )?
+        (
             vChronosWindowClause=chronosWindowClause
             {
                 vResult.ChronosWindowClause = vChronosWindowClause;
@@ -18408,6 +18422,415 @@ timestampByClause returns [TimestampByClause vResult = this.FragmentFactory.Crea
         vExpression=expression
         {
             vResult.TimestampExpression = vExpression;
+        }
+    ;
+
+matchRecognizeClause returns [MatchRecognizeClause vResult = this.FragmentFactory.CreateFragment<MatchRecognizeClause>()]
+{
+    ScalarExpression vPartitionExpression;
+    ChronosDurationExpression vLimit;
+    MatchRecognizeMeasure vMeasure;
+    MatchRecognizeRowsPerMatchClause vRowsPerMatchClause;
+    MatchRecognizeAfterMatchSkipClause vAfterMatchSkipClause;
+    MatchRecognizePattern vPattern;
+    MatchRecognizePatternVariableDefinition vDefinition;
+    Identifier vAlias;
+}
+    :   tMatchRecognize:Identifier
+        {
+            Match(tMatchRecognize, CodeGenerationSupporter.MatchRecognize);
+            UpdateTokenInfo(vResult, tMatchRecognize);
+        }
+        LeftParenthesis
+        (
+            tPartition:Identifier By
+            {
+                Match(tPartition, CodeGenerationSupporter.Partition);
+            }
+            vPartitionExpression=expression
+            {
+                AddAndUpdateTokenInfo(vResult, vResult.PartitionByExpressions, vPartitionExpression);
+            }
+            (
+                Comma
+                vPartitionExpression=expression
+                {
+                    AddAndUpdateTokenInfo(vResult, vResult.PartitionByExpressions, vPartitionExpression);
+                }
+            )*
+        )?
+        tLimit:Identifier
+        {
+            Match(tLimit, CodeGenerationSupporter.Limit);
+        }
+        vLimit=chronosDurationExpression
+        {
+            vResult.Limit = vLimit;
+        }
+        (
+            {NextTokenMatches(CodeGenerationSupporter.Measures)}?
+            tMeasures:Identifier
+            {
+                Match(tMeasures, CodeGenerationSupporter.Measures);
+            }
+            vMeasure=matchRecognizeMeasure
+            {
+                AddAndUpdateTokenInfo(vResult, vResult.Measures, vMeasure);
+            }
+            (
+                Comma
+                vMeasure=matchRecognizeMeasure
+                {
+                    AddAndUpdateTokenInfo(vResult, vResult.Measures, vMeasure);
+                }
+            )*
+        )?
+        (
+            {(NextTokenMatches(CodeGenerationSupporter.One) || LA(1) == All)}?
+            vRowsPerMatchClause=matchRecognizeRowsPerMatchClause
+            {
+                vResult.RowsPerMatchClause = vRowsPerMatchClause;
+            }
+        )?
+        (
+            {NextTokenMatches(CodeGenerationSupporter.After)}?
+            vAfterMatchSkipClause=matchRecognizeAfterMatchSkipClause
+            {
+                vResult.AfterMatchSkipClause = vAfterMatchSkipClause;
+            }
+        )?
+        tPattern:Identifier
+        {
+            Match(tPattern, CodeGenerationSupporter.Pattern);
+        }
+        LeftParenthesis
+        vPattern=matchRecognizePattern
+        tPatternRParen:RightParenthesis
+        {
+            vResult.Pattern = vPattern;
+            UpdateTokenInfo(vResult, tPatternRParen);
+        }
+        tDefine:Identifier
+        {
+            Match(tDefine, CodeGenerationSupporter.Define);
+        }
+        vDefinition=matchRecognizePatternVariableDefinition
+        {
+            AddAndUpdateTokenInfo(vResult, vResult.Definitions, vDefinition);
+        }
+        (
+            Comma
+            vDefinition=matchRecognizePatternVariableDefinition
+            {
+                AddAndUpdateTokenInfo(vResult, vResult.Definitions, vDefinition);
+            }
+        )*
+        tRParen:RightParenthesis
+        {
+            UpdateTokenInfo(vResult, tRParen);
+        }
+        (As)?
+        vAlias=identifier
+        {
+            vResult.Alias = vAlias;
+            vResult.UpdateTokenInfo(vAlias);
+        }
+    ;
+
+matchRecognizeMeasure returns [MatchRecognizeMeasure vResult = this.FragmentFactory.CreateFragment<MatchRecognizeMeasure>()]
+{
+    ScalarExpression vExpression;
+    Identifier vAlias;
+}
+    :   vExpression=expression
+        {
+            vResult.Expression = vExpression;
+            vResult.UpdateTokenInfo(vExpression);
+        }
+        As
+        vAlias=identifier
+        {
+            vResult.Alias = vAlias;
+            vResult.UpdateTokenInfo(vAlias);
+        }
+    ;
+
+matchRecognizeRowsPerMatchClause returns [MatchRecognizeRowsPerMatchClause vResult = null]
+    :   tOne:Identifier
+        {
+            Match(tOne, CodeGenerationSupporter.One);
+        }
+        tRow:Identifier
+        {
+            Match(tRow, CodeGenerationSupporter.Row);
+        }
+        tPer:Identifier
+        {
+            Match(tPer, CodeGenerationSupporter.Per);
+        }
+        tMatch:Identifier
+        {
+            Match(tMatch, CodeGenerationSupporter.GraphMatch);
+            vResult = this.FragmentFactory.CreateFragment<MatchRecognizeOneRowPerMatchClause>();
+            UpdateTokenInfo(vResult, tOne);
+            UpdateTokenInfo(vResult, tMatch);
+        }
+    |   tAll:All
+        tRows:Identifier
+        {
+            Match(tRows, CodeGenerationSupporter.Rows);
+        }
+        tPer2:Identifier
+        {
+            Match(tPer2, CodeGenerationSupporter.Per);
+        }
+        tMatch2:Identifier
+        {
+            Match(tMatch2, CodeGenerationSupporter.GraphMatch);
+            vResult = this.FragmentFactory.CreateFragment<MatchRecognizeAllRowsPerMatchClause>();
+            UpdateTokenInfo(vResult, tAll);
+            UpdateTokenInfo(vResult, tMatch2);
+        }
+    ;
+
+matchRecognizeAfterMatchSkipClause returns [MatchRecognizeAfterMatchSkipClause vResult = null]
+{
+    Identifier vVariable;
+}
+    :   tAfter:Identifier
+        {
+            Match(tAfter, CodeGenerationSupporter.After);
+        }
+        tMatch:Identifier
+        {
+            Match(tMatch, CodeGenerationSupporter.GraphMatch);
+        }
+        tSkip:Identifier
+        {
+            Match(tSkip, CodeGenerationSupporter.Skip);
+        }
+        (
+            {NextTokenMatches(CodeGenerationSupporter.Past)}?
+            tPast:Identifier
+            tLast:Identifier
+            tRow:Identifier
+            {
+                Match(tPast, CodeGenerationSupporter.Past);
+                Match(tLast, CodeGenerationSupporter.Last);
+                Match(tRow, CodeGenerationSupporter.Row);
+                vResult = this.FragmentFactory.CreateFragment<MatchRecognizeSkipPastLastRowClause>();
+                UpdateTokenInfo(vResult, tAfter);
+                UpdateTokenInfo(vResult, tLast);
+            }
+        |   To
+            (
+                {NextTokenMatches(CodeGenerationSupporter.Next)}?
+                tNext:Identifier
+                tRow2:Identifier
+                {
+                    Match(tNext, CodeGenerationSupporter.Next);
+                    Match(tRow2, CodeGenerationSupporter.Row);
+                    vResult = this.FragmentFactory.CreateFragment<MatchRecognizeSkipToNextRowClause>();
+                    UpdateTokenInfo(vResult, tAfter);
+                    UpdateTokenInfo(vResult, tNext);
+                }
+            |   {NextTokenMatches(CodeGenerationSupporter.First)}?
+                tFirst:Identifier
+                {
+                    Match(tFirst, CodeGenerationSupporter.First);
+                }
+                vVariable=identifier
+                {
+                    MatchRecognizeSkipToFirstClause vSkipToFirst = this.FragmentFactory.CreateFragment<MatchRecognizeSkipToFirstClause>();
+                    vSkipToFirst.PatternVariable = vVariable;
+                    UpdateTokenInfo(vSkipToFirst, tAfter);
+                    vSkipToFirst.UpdateTokenInfo(vVariable);
+                    vResult = vSkipToFirst;
+                }
+            |   {NextTokenMatches(CodeGenerationSupporter.Last)}?
+                tLastVariable:Identifier
+                {
+                    Match(tLastVariable, CodeGenerationSupporter.Last);
+                }
+                vVariable=identifier
+                {
+                    MatchRecognizeSkipToLastClause vSkipToLast = this.FragmentFactory.CreateFragment<MatchRecognizeSkipToLastClause>();
+                    vSkipToLast.PatternVariable = vVariable;
+                    UpdateTokenInfo(vSkipToLast, tAfter);
+                    vSkipToLast.UpdateTokenInfo(vVariable);
+                    vResult = vSkipToLast;
+                }
+            )
+        )
+    ;
+
+matchRecognizePatternVariableDefinition returns [MatchRecognizePatternVariableDefinition vResult = this.FragmentFactory.CreateFragment<MatchRecognizePatternVariableDefinition>()]
+{
+    Identifier vVariable;
+    BooleanExpression vCondition;
+}
+    :   vVariable=identifier
+        {
+            vResult.Variable = vVariable;
+            vResult.UpdateTokenInfo(vVariable);
+        }
+        As
+        vCondition=booleanExpression
+        {
+            vResult.Condition = vCondition;
+        }
+    ;
+
+matchRecognizePattern returns [MatchRecognizePattern vResult = null]
+{
+    MatchRecognizePattern vNextPattern;
+    MatchRecognizePatternAlternation vAlternation;
+}
+    :   vResult=matchRecognizePatternConcatenation
+        (
+            VerticalLine
+            vNextPattern=matchRecognizePatternConcatenation
+            {
+                if (vResult is MatchRecognizePatternAlternation existingAlternation)
+                {
+                    AddAndUpdateTokenInfo(existingAlternation, existingAlternation.Patterns, vNextPattern);
+                }
+                else
+                {
+                    vAlternation = this.FragmentFactory.CreateFragment<MatchRecognizePatternAlternation>();
+                    vAlternation.UpdateTokenInfo(vResult);
+                    AddAndUpdateTokenInfo(vAlternation, vAlternation.Patterns, vResult);
+                    AddAndUpdateTokenInfo(vAlternation, vAlternation.Patterns, vNextPattern);
+                    vResult = vAlternation;
+                }
+            }
+        )*
+    ;
+
+matchRecognizePatternConcatenation returns [MatchRecognizePattern vResult = null]
+{
+    MatchRecognizePattern vNextPattern;
+    MatchRecognizePatternConcatenation vConcatenation;
+}
+    :   vResult=matchRecognizePatternFactor
+        (
+            vNextPattern=matchRecognizePatternFactor
+            {
+                if (vResult is MatchRecognizePatternConcatenation existingConcatenation)
+                {
+                    AddAndUpdateTokenInfo(existingConcatenation, existingConcatenation.Patterns, vNextPattern);
+                }
+                else
+                {
+                    vConcatenation = this.FragmentFactory.CreateFragment<MatchRecognizePatternConcatenation>();
+                    vConcatenation.UpdateTokenInfo(vResult);
+                    AddAndUpdateTokenInfo(vConcatenation, vConcatenation.Patterns, vResult);
+                    AddAndUpdateTokenInfo(vConcatenation, vConcatenation.Patterns, vNextPattern);
+                    vResult = vConcatenation;
+                }
+            }
+        )*
+    ;
+
+matchRecognizePatternFactor returns [MatchRecognizePattern vResult = null]
+{
+    MatchRecognizePattern vPattern;
+    MatchRecognizePatternQuantifier vQuantifier;
+    MatchRecognizePatternFactor vFactor;
+}
+    :   vPattern=matchRecognizePatternPrimary
+        {
+            vResult = vPattern;
+        }
+        (
+            vQuantifier=matchRecognizePatternQuantifier
+            {
+                vFactor = this.FragmentFactory.CreateFragment<MatchRecognizePatternFactor>();
+                vFactor.Pattern = vPattern;
+                vFactor.Quantifier = vQuantifier;
+                vFactor.UpdateTokenInfo(vPattern);
+                vFactor.UpdateTokenInfo(vQuantifier);
+                vResult = vFactor;
+            }
+        )?
+    ;
+
+matchRecognizePatternPrimary returns [MatchRecognizePattern vResult = null]
+{
+    Identifier vVariable;
+    MatchRecognizePattern vPattern;
+    MatchRecognizePatternGroup vGroup;
+    MatchRecognizePatternVariable vVariablePattern;
+}
+    :   vVariable=identifier
+        {
+            vVariablePattern = this.FragmentFactory.CreateFragment<MatchRecognizePatternVariable>();
+            vVariablePattern.Variable = vVariable;
+            vVariablePattern.UpdateTokenInfo(vVariable);
+            vResult = vVariablePattern;
+        }
+    |   tLParen:LeftParenthesis
+        vPattern=matchRecognizePattern
+        tRParen:RightParenthesis
+        {
+            vGroup = this.FragmentFactory.CreateFragment<MatchRecognizePatternGroup>();
+            UpdateTokenInfo(vGroup, tLParen);
+            vGroup.Pattern = vPattern;
+            UpdateTokenInfo(vGroup, tRParen);
+            vResult = vGroup;
+        }
+    ;
+
+matchRecognizePatternQuantifier returns [MatchRecognizePatternQuantifier vResult = null]
+{
+    MatchRecognizeCountedQuantifier vCounted = null;
+    IntegerLiteral vMinimum;
+    IntegerLiteral vMaximum;
+}
+    :   tStar:Star
+        {
+            vResult = this.FragmentFactory.CreateFragment<MatchRecognizeZeroOrMoreQuantifier>();
+            UpdateTokenInfo(vResult, tStar);
+        }
+    |   tPlus:Plus
+        {
+            vResult = this.FragmentFactory.CreateFragment<MatchRecognizeOneOrMoreQuantifier>();
+            UpdateTokenInfo(vResult, tPlus);
+        }
+    |   tQuestion:QuestionMark
+        {
+            vResult = this.FragmentFactory.CreateFragment<MatchRecognizeOptionalQuantifier>();
+            UpdateTokenInfo(vResult, tQuestion);
+        }
+    |   tLCurly:LeftCurly
+        {
+            vCounted = this.FragmentFactory.CreateFragment<MatchRecognizeCountedQuantifier>();
+            UpdateTokenInfo(vCounted, tLCurly);
+            vResult = vCounted;
+        }
+        (
+            vMinimum=integer
+            {
+                vCounted.MinimumCount = vMinimum;
+            }
+            (
+                Comma
+                (
+                    vMaximum=integer
+                    {
+                        vCounted.MaximumCount = vMaximum;
+                    }
+                )?
+            )?
+        |   Comma
+            vMaximum=integer
+            {
+                vCounted.MaximumCount = vMaximum;
+            }
+        )
+        tRCurly:RightCurly
+        {
+            UpdateTokenInfo(vCounted, tRCurly);
         }
     ;
 
@@ -20720,10 +21143,10 @@ simpleTableReferenceAlias[TableReferenceWithAlias vParent]
 }
     :   {
             // Starting from TSql170, 'WINDOW' will be treated as conditional keyword
-            // and cannot be used as an alias. Without this check, the grammar fails to
-            // parse the WINDOW clause in query specification.
-            //
-            if(NextTokenMatches(CodeGenerationSupporter.Window))
+            // and MATCH_RECOGNIZE is also a Chronos postfix clause. Without this
+            // check, the grammar would consume either clause keyword as an alias.
+            if(NextTokenMatches(CodeGenerationSupporter.Window)
+                || NextTokenMatches(CodeGenerationSupporter.MatchRecognize))
             {
                 return;
             }
@@ -35067,6 +35490,7 @@ RightCurly           : '}' ;
 Star             : '*' ;
 MultiplyEquals                : "*=";
 Plus            : '+' ;
+QuestionMark    : '?' ;
 Comma            : ',' ;
 Minus            : '-' ;
 protected // see Number productions

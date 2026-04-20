@@ -61,6 +61,12 @@ namespace Microsoft.SqlServer.TransactSql.ScriptDom.ScriptGenerator
                 GenerateFragmentWithAlignmentPointIfNotNull(node.TimestampByClause, clauseBody);
             }
 
+            if (node.MatchRecognizeClause != null)
+            {
+                NewLine();
+                GenerateFragmentWithAlignmentPointIfNotNull(node.MatchRecognizeClause, clauseBody);
+            }
+
             if (node.ChronosWindowClause != null)
             {
                 NewLine();
